@@ -1,0 +1,83 @@
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
+
+
+class Client(models.Model):
+    email = models.EmailField(unique=True,help_text='Укажите email',verbose_name='email')
+    full_name = models.CharField(max_length=100,help_text='Укажите полное имя',verbose_name='Полное имя')
+    comment = models.TextField(blank=True, verbose_name='Комментарий')
+
+    def __str__(self):
+        return f"{self.email} - {self.full_name}"
+
+    class Meta:
+        verbose_name = 'Клиент'
+        verbose_name_plural = 'Клиенты'
+
+
+class Message(models.Model):
+    subject = models.CharField(max_length=255,help_text='Укажите тему письма',verbose_name='Тема письма')
+    body = models.TextField(help_text='Укажите тело письма',verbose_name='тело письма')
+
+    def __str__(self):
+        return self.subject
+
+    class Meta:
+        verbose_name = 'Сообщение'
+        verbose_name_plural = 'Сообщения'
+
+
+class Mailing(models.Model):
+    start_time = models.DateTimeField(
+        help_text='Укажите дату и время начала отправки',
+        verbose_name='Дата и время начала отправки'
+    )
+    end_time = models.DateTimeField(
+        help_text='Укажите дату и время окончания отправки',
+        verbose_name='Дата и время окончания отправки'
+    )
+    message = models.ForeignKey(Message,on_delete=models.CASCADE,verbose_name='Сообщение письма')
+    recipients = models.ManyToManyField(Client, verbose_name='Список клиентов, которые получат данную рассылку')
+
+    def clean(self):
+        if self.start_time and self.end_time:
+            if self.start_time >= self.end_time:
+                raise ValidationError('Дата начала должна быть раньше даты окончания')
+
+    @property
+    def status(self):
+        now = timezone.now()
+        if now < self.start_time:
+            return 'Создана'
+        elif self.start_time <= now <= self.end_time:
+            return 'Запущена'
+        return 'Завершена'
+
+    def __str__(self):
+        return f"Рассылка - {self.message}"
+
+    class Meta:
+        verbose_name = 'Рассылка'
+        verbose_name_plural = 'Рассылки'
+
+class Attempt(models.Model):
+
+    STATUS_CHOICES = [
+            ('Успешно', 'Успешно'),
+            ('Не успешно', 'Не успешно'),
+        ]
+
+    attempt_time = models.DateTimeField(auto_now_add=True,verbose_name='дата и время попытки')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES,verbose_name='статус попытки')
+    server_response = models.TextField(verbose_name='ответ почтового сервера')
+    mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE,verbose_name='рассылка')
+
+
+    def __str__(self):
+        return f"Попытка рассылки - {self.status}"
+
+    class Meta:
+        verbose_name = 'Попытка рассылки'
+        verbose_name_plural = 'Попытки рассылок'
+
