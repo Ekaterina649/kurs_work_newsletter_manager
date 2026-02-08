@@ -1,0 +1,30 @@
+{% extends "mailings/base.html" %}
+{% block title %}Попытки рассылок{% endblock %}
+
+{% block content %}
+<h2>Попытки рассылок</h2>
+{% if attempts %}
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Время</th>
+            <th>Статус</th>
+            <th>Ответ сервера</th>
+            <th>Рассылка</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for attempt in attempts %}
+        <tr>
+            <td>{{ attempt.attempt_time }}</td>
+            <td>{{ attempt.status }}</td>
+            <td>{{ attempt.server_response }}</td>
+            <td>{{ attempt.mailing }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>Попыток рассылок пока нет.</p>
+{% endif %}
+{% endblock %}

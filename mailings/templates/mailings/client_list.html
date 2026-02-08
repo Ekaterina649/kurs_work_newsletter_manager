@@ -1,0 +1,44 @@
+{% extends "mailings/base.html" %}
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Клиенты</h2>
+    <a href="{% url 'mailings:client_create' %}" class="btn btn-primary">
+        + Добавить клиента
+    </a>
+</div>
+
+{% if object_list %}
+<table class="table table-striped table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Email</th>
+            <th>ФИО</th>
+            <th>Комментарий</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for client in object_list %}
+        <tr>
+            <td>{{ client.email }}</td>
+            <td>{{ client.full_name }}</td>
+            <td>{{ client.comment|truncatechars:40 }}</td>
+            <td class="text-end">
+                <a href="{% url 'mailings:client_update' client.pk %}" class="btn btn-sm btn-outline-secondary">
+                </a>
+                <a href="{% url 'mailings:client_delete' client.pk %}" class="btn btn-sm btn-outline-danger">
+                    Удалить
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info text-center shadow-sm">
+    Клиентов пока нет. Самое время добавить первого
+</div>
+{% endif %}
+{% endblock %}
