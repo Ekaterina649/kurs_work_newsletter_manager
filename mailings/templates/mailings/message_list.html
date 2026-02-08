@@ -21,11 +21,13 @@
                 </p>
             </div>
             <div class="card-footer text-end bg-white">
-                <a href="{% url 'mailings:message_update' message.pk %}" class="btn btn-sm btn-outline-secondary">
-                </a>
-                <a href="{% url 'mailings:message_delete' message.pk %}" class="btn btn-sm btn-outline-danger">
-                    Удалить
-                </a>
+                {% if object.owner == user or user.groups.all.0.name == "Менеджеры" %}
+                    <a href="{% url 'mailings:message_update' message.pk %}" class="btn btn-sm btn-outline-secondary">
+                    </a>
+                    <a href="{% url 'mailings:message_delete' message.pk %}" class="btn btn-sm btn-outline-danger">
+                        Удалить
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
