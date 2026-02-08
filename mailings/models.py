@@ -2,11 +2,21 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
+from config import settings
+
 
 class Client(models.Model):
     email = models.EmailField(unique=True,help_text='Укажите email',verbose_name='email')
     full_name = models.CharField(max_length=100,help_text='Укажите полное имя',verbose_name='Полное имя')
     comment = models.TextField(blank=True, verbose_name='Комментарий')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='clients',
+        null = True,
+        blank = True,
+    )
 
     def __str__(self):
         return f"{self.email} - {self.full_name}"
@@ -18,7 +28,15 @@ class Client(models.Model):
 
 class Message(models.Model):
     subject = models.CharField(max_length=255,help_text='Укажите тему письма',verbose_name='Тема письма')
-    body = models.TextField(help_text='Укажите тело письма',verbose_name='тело письма')
+    body = models.TextField(help_text='Укажите текст письма',verbose_name='текст письма')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='messages',
+        null = True,
+        blank = True,
+    )
 
     def __str__(self):
         return self.subject
@@ -39,6 +57,15 @@ class Mailing(models.Model):
     )
     message = models.ForeignKey(Message,on_delete=models.CASCADE,verbose_name='Сообщение письма')
     recipients = models.ManyToManyField(Client, verbose_name='Список клиентов, которые получат данную рассылку')
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Владелец',
+        related_name='mailings',
+        null = True,
+        blank = True
+    )
 
     def clean(self):
         if self.start_time and self.end_time:
