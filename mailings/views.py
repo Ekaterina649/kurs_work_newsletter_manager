@@ -1,9 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from mailings.models import Message, Client, Mailing
+from mailings.forms import MailingForm, ClientForm, MessageForm
+from mailings.models import Message, Client, Mailing, Attempt
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -14,12 +14,12 @@ class MessageListView(LoginRequiredMixin, ListView):
 
 class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
-    fields = ('subject', 'body')
+    form_class = MessageForm
     success_url = reverse_lazy('mailings:message_list')
 
 class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
-    fields = ('subject', 'body')
+    form_class = MessageForm
     success_url = reverse_lazy('mailings:message_list')
 
 class MessageDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
@@ -38,12 +38,12 @@ class ClientListView(LoginRequiredMixin, ListView):
 
 class ClientCreateView(LoginRequiredMixin, CreateView):
     model = Client
-    fields = "__all__"
+    form_class = ClientForm
     success_url = reverse_lazy('mailings:client_list')
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
-    fields = "__all__"
+    form_class = ClientForm
     success_url = reverse_lazy('mailings:client_list')
 
 class ClientDeleteView(LoginRequiredMixin, DeleteView):
@@ -60,12 +60,12 @@ class MailingListView(LoginRequiredMixin, ListView):
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
     model = Mailing
-    fields = "__all__"
+    form_class = MailingForm
     success_url = reverse_lazy('mailings:mailing_list')
 
 class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
-    fields = ('start_time', 'end_time', 'message', 'recipients')
+    form_class = MailingForm
     success_url = reverse_lazy('mailings:mailing_list')
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
@@ -73,3 +73,8 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'mailings/post_confirm_delete.html'
     success_url = reverse_lazy('mailings:mailing_list')
     permission_required = 'mailings.delete_message'
+
+class AttemptListView(LoginRequiredMixin, ListView):
+    model = Attempt
+    template_name = 'mailings/attempt_list.html'
+    context_object_name = 'attempts'
