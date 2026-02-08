@@ -11,7 +11,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">Сервис рассылок</a>
+        <a class="navbar-brand" href="{% url 'home' %}">Сервис рассылок</a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -31,7 +31,7 @@
                         <a class="nav-link" href="{% url 'mailings:mailing_list' %}">Рассылки</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Попытки рассылок</a>
+                        <a class="nav-link" href="{% url 'mailings:attempt_list' %}">Попытки рассылок</a>
                     </li>
                 {% endif %}
             </ul>

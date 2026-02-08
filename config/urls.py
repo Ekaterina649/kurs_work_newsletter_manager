@@ -20,10 +20,14 @@ from django.urls import path, include
 from config import settings
 from django.conf.urls.static import static
 
+from mailings.views import HomeView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include('mailings.urls')),
+    path("mailings/", include('mailings.urls')),
     path("users/", include('users.urls')),
+    path("", HomeView.as_view(), name="home"),
+
 
 ]
 if settings.DEBUG:

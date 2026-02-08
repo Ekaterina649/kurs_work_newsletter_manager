@@ -21,10 +21,10 @@ urlpatterns = [
     path('clients/<int:pk>/delete/', ClientDeleteView.as_view(), name='client_delete'),
 
     # Рассылки
-    path('mailings/', MailingListView.as_view(), name='mailing_list'),
-    path('mailings/create/', MailingCreateView.as_view(), name='mailing_create'),
-    path('mailings/<int:pk>/update/', MailingUpdateView.as_view(), name='mailing_update'),
-    path('mailings/<int:pk>/delete/', MailingDeleteView.as_view(), name='mailing_delete'),
+    path('', MailingListView.as_view(), name='mailing_list'),
+    path('create/', MailingCreateView.as_view(), name='mailing_create'),
+    path('<int:pk>/update/', MailingUpdateView.as_view(), name='mailing_update'),
+    path('<int:pk>/delete/', MailingDeleteView.as_view(), name='mailing_delete'),
 
     path('attempts/', AttemptListView.as_view(), name='attempt_list'),
 ]
