@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
@@ -22,3 +23,14 @@ class UserLoginForm(AuthenticationForm):
             field.widget.attrs.update({
                 'class': 'form-control form-control-lg'
             })
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('avatar', 'phone', 'country')
+        widgets = {
+            'avatar': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.TextInput(attrs={'class': 'form-control'}),
+        }

@@ -1,10 +1,12 @@
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
 from config import settings
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, UserProfileForm
+from .models import User
 
 
 class RegisterView(CreateView):
@@ -25,3 +27,20 @@ class RegisterView(CreateView):
         recipient_list = [user_email]
         send_mail(subject, message, from_email, recipient_list)
 
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/profile.html'
+    context_object_name = 'user'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserProfileForm
+    template_name = 'users/profile_edit.html'
+    success_url = reverse_lazy('users:profile')
+
+    def get_object(self, queryset=None):
+        return self.request.user
