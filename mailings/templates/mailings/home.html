@@ -3,34 +3,78 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Сервис рассылок</h1>
+<h1 class="mb-4 text-center">Сервис рассылок</h1>
 
-<div class="row">
+<div class="row g-4">
+    <!-- Всего рассылок -->
     <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h5>Всего рассылок</h5>
-                <h2>{{ total_mailings }}</h2>
+        <div class="card shadow-sm border-0 text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-card-list fs-1 text-primary"></i>
+                <h5 class="mt-2">Всего рассылок</h5>
+                <h2 class="fw-bold">{{ total_mailings }}</h2>
             </div>
         </div>
     </div>
 
+    <!-- Активные рассылки -->
     <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h5>Активные рассылки</h5>
-                <h2 class="text-success">{{ active_mailings }}</h2>
+        <div class="card shadow-sm border-0 text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-play-circle-fill fs-1 text-success"></i>
+                <h5 class="mt-2">Активные рассылки</h5>
+                <h2 class="fw-bold text-success">{{ active_mailings }}</h2>
             </div>
         </div>
     </div>
 
+    <!-- Получатели -->
     <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h5>Получатели</h5>
-                <h2>{{ total_clients }}</h2>
+        <div class="card shadow-sm border-0 text-center p-3">
+            <div class="card-body">
+                <i class="bi bi-people-fill fs-1 text-warning"></i>
+                <h5 class="mt-2">Получатели</h5>
+                <h2 class="fw-bold">{{ total_clients }}</h2>
             </div>
         </div>
     </div>
 </div>
+
+<div class="row g-4 mt-3">
+    <!-- Успешные отправки -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle-fill fs-1 text-success"></i>
+                <h5 class="mt-2">Успешные отправки</h5>
+                <h2 class="fw-bold text-success">{{ successful_attempts }}</h2>
+                <!-- Прогресс -->
+                {% if total_attempts %}
+                <div class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar bg-success" role="progressbar"
+                         style="width: {{ successful_attempts|floatformat:2|divisibleby:total_attempts|floatformat:0 }}%;"></div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Неуспешные отправки -->
+    <div class="col-md-6">
+        <div class="card shadow-sm border-0 p-3">
+            <div class="card-body text-center">
+                <i class="bi bi-x-circle-fill fs-1 text-danger"></i>
+                <h5 class="mt-2">Неуспешные отправки</h5>
+                <h2 class="fw-bold text-danger">{{ failed_attempts }}</h2>
+                {% if total_attempts %}
+                <div class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar bg-danger" role="progressbar"
+                         style="width: {{ failed_attempts|floatformat:2|divisibleby:total_attempts|floatformat:0 }}%;"></div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

@@ -1,12 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.cache import cache
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.timezone import now
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 
 from mailings.forms import MailingForm, ClientForm, MessageForm
 from mailings.models import Message, Client, Mailing, Attempt
+from mailings.utils import send_mailing
 
 
 class MessageListView(LoginRequiredMixin, ListView):
@@ -96,5 +98,16 @@ class HomeView(TemplateView):
             end_time__gte=now,
         ).count()
         context['total_clients'] = Client.objects.count()
+        context['successful_attempts'] = Attempt.objects.filter(status='Успешно').count()
+        context['failed_attempts'] = Attempt.objects.filter(status='Не успешно').count()
 
         return context
+
+class MailingSendView(DetailView):
+    model = Mailing
+    template_name = "mailings/mailing_send.html"
+
+    def post(self, request, *args, **kwargs):
+        mailing = self.get_object()
+        send_mailing(mailing)
+        return redirect("mailings:mailing_list")
