@@ -24,6 +24,10 @@ class Client(models.Model):
     class Meta:
         verbose_name = 'Клиент'
         verbose_name_plural = 'Клиенты'
+        permissions = [
+            ('can_view_any_clients', 'Может просматривать любых клиентов'),
+            ('can_edit_any_clients', 'Может редактировать любых клиентов'),
+        ]
 
 
 class Message(models.Model):
@@ -44,6 +48,10 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'Сообщение'
         verbose_name_plural = 'Сообщения'
+        permissions = [
+            ('can_view_any_messages', 'Может просматривать любые сообщения'),
+            ('can_edit_any_messages', 'Может редактировать любые сообщения'),
+        ]
 
 
 class Mailing(models.Model):
@@ -87,6 +95,11 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+        permissions = [
+            ('can_view_any_mailings', 'Может просматривать любые рассылки'),
+            ('can_edit_any_mailings', 'Может редактировать любые рассылки'),
+            ('can_delete_any_mailings', 'Может удалять любые рассылки'),
+        ]
 
 class Attempt(models.Model):
 
