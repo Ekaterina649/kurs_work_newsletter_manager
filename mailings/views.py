@@ -110,15 +110,15 @@ class ClientDeleteView(ManagerReadonlyMixin,LoginRequiredMixin, DeleteView):
 
 
 #@method_decorator(cache_page(60 * 5), name='dispatch')
-class MailingListView(ManagerContextMixin,LoginRequiredMixin, ListView):
+class MailingListView(ManagerContextMixin, LoginRequiredMixin, ListView):
     model = Mailing
     template_name = 'mailings/mailing_list.html'
     context_object_name = 'mailings'
 
     def get_queryset(self):
         if self.request.user.groups.filter(name='Менеджеры').exists():
-            return Mailing.objects.all()
-        return Mailing.objects.filter(owner=self.request.user)
+            return Mailing.objects.all().order_by('-start_time')
+        return Mailing.objects.filter(owner=self.request.user).order_by('-start_time')
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -221,15 +221,13 @@ class MailingSendView(LoginRequiredMixin, DetailView):
         return redirect("mailings:mailing_list")
 
 
-class ToggleMailingActiveView(LoginRequiredMixin, View):
-    """
-    Менеджер может включать/отключать рассылку.
-    """
-    def post(self, request, pk, *args, **kwargs):
+class DisableMailingView(LoginRequiredMixin, View):
+    def post(self, request, pk):
         if not request.user.groups.filter(name='Менеджеры').exists():
-            raise PermissionDenied("У вас нет прав для изменения рассылки")
+            raise PermissionDenied("У вас нет доступа")
 
         mailing = get_object_or_404(Mailing, pk=pk)
-        mailing.is_active = not mailing.is_active  # переключаем активность
+        # Отключаем рассылку
+        mailing.is_disabled = True
         mailing.save()
-        return HttpResponseRedirect(reverse_lazy('mailings:mailing_list'))
+        return redirect('mailings:mailing_list')

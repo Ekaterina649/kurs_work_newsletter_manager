@@ -7,13 +7,11 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Рассылки</h2>
     {% if not is_manager %}
-        <a href="{% url 'mailings:mailing_create' %}" class="btn btn-primary">
-             + Новая рассылка
-        </a>
+        <a href="{% url 'mailings:mailing_create' %}" class="btn btn-primary">+ Новая рассылка</a>
     {% endif %}
 </div>
 
-{% if object_list %}
+{% if mailings %}
 <table class="table table-hover shadow-sm">
     <thead class="table-dark">
         <tr>
@@ -24,7 +22,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for mailing in object_list %}
+        {% for mailing in mailings %}
         <tr>
             <td>
                 {{ mailing.start_time|date:"d.m.Y H:i" }}<br>
@@ -35,10 +33,10 @@
                 <span class="badge
                     {% if mailing.status == 'Запущена' %}bg-success
                     {% elif mailing.status == 'Создана' %}bg-secondary
-                    {% else %}bg-dark{% endif %}">
+                    {% elif mailing.status == 'Завершена' %}bg-dark{% endif %}">
                     {{ mailing.status }}
                 </span>
-                {% if not mailing.is_active %}
+                {% if mailing.is_disabled %}
                     <span class="badge bg-danger">Отключена</span>
                 {% endif %}
             </td>
@@ -46,12 +44,10 @@
                 {% if mailing.owner == user %}
                     <a href="{% url 'mailings:mailing_update' mailing.pk %}" class="btn btn-sm btn-outline-secondary">✏️</a>
                     <a href="{% url 'mailings:mailing_delete' mailing.pk %}" class="btn btn-sm btn-outline-danger">🗑</a>
-                {% elif is_manager %}
-                    <form method="post" action="{% url 'mailings:mailings_toggle' mailing.pk %}" style="display:inline;">
+                {% elif is_manager and not mailing.is_disabled and mailing.status != 'Завершена' %}
+                    <form method="post" action="{% url 'mailings:mailing_disable' mailing.pk %}" style="display:inline;">
                         {% csrf_token %}
-                        <button class="btn btn-sm {% if mailing.is_active %}btn-danger{% else %}btn-success{% endif %}">
-                            {% if mailing.is_active %}Отключить{% else %}Включить{% endif %}
-                        </button>
+                        <button class="btn btn-sm btn-danger">Отключить</button>
                     </form>
                 {% endif %}
             </td>

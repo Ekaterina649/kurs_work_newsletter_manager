@@ -74,6 +74,7 @@ class Mailing(models.Model):
         null = True,
         blank = True
     )
+    is_disabled = models.BooleanField(default=False)
 
     def clean(self):
         if self.start_time and self.end_time:
