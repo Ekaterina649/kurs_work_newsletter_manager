@@ -9,7 +9,7 @@
     {% if not is_manager %}
         <a href="{% url 'mailings:mailing_create' %}" class="btn btn-primary">
              + Новая рассылка
-         </a>
+        </a>
     {% endif %}
 </div>
 
@@ -20,7 +20,7 @@
             <th>Период</th>
             <th>Сообщение</th>
             <th>Статус</th>
-            <th></th>
+            {% if is_manager %}<th>Действие</th>{% else %}<th></th>{% endif %}
         </tr>
     </thead>
     <tbody>
@@ -38,11 +38,21 @@
                     {% else %}bg-dark{% endif %}">
                     {{ mailing.status }}
                 </span>
+                {% if not mailing.is_active %}
+                    <span class="badge bg-danger">Отключена</span>
+                {% endif %}
             </td>
             <td class="text-end">
                 {% if mailing.owner == user %}
                     <a href="{% url 'mailings:mailing_update' mailing.pk %}" class="btn btn-sm btn-outline-secondary">✏️</a>
                     <a href="{% url 'mailings:mailing_delete' mailing.pk %}" class="btn btn-sm btn-outline-danger">🗑</a>
+                {% elif is_manager %}
+                    <form method="post" action="{% url 'mailings:mailings_toggle' mailing.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button class="btn btn-sm {% if mailing.is_active %}btn-danger{% else %}btn-success{% endif %}">
+                            {% if mailing.is_active %}Отключить{% else %}Включить{% endif %}
+                        </button>
+                    </form>
                 {% endif %}
             </td>
         </tr>
@@ -54,4 +64,5 @@
     Рассылок пока нет
 </div>
 {% endif %}
+
 {% endblock %}
