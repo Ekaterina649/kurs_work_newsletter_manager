@@ -4,9 +4,11 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>Клиенты</h2>
-    <a href="{% url 'mailings:client_create' %}" class="btn btn-primary">
-        + Добавить клиента
-    </a>
+    {% if not is_manager %}
+        <a href="{% url 'mailings:client_create' %}" class="btn btn-primary">
+            + Добавить клиента
+         </a>
+    {% endif %}
 </div>
 
 {% if object_list %}
@@ -26,7 +28,7 @@
             <td>{{ client.full_name }}</td>
             <td>{{ client.comment|truncatechars:40 }}</td>
             <td class="text-end">
-                {% if object.owner == user or user.groups.all.0.name == "Менеджеры" %}
+                {% if client.owner == user %}
                     <a href="{% url 'mailings:client_update' client.pk %}" class="btn btn-sm btn-outline-secondary">
                     </a>
                     <a href="{% url 'mailings:client_delete' client.pk %}" class="btn btn-sm btn-outline-danger">

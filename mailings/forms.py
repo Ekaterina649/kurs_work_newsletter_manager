@@ -61,6 +61,20 @@ class MailingForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        if user and not user.groups.filter(name='Менеджеры').exists():
+            # Обычный пользователь видит только своих клиентов
+            self.fields['recipients'].queryset = Client.objects.filter(owner=user)
+            # Только свои сообщения
+            self.fields['message'].queryset = Message.objects.filter(owner=user)
+        else:
+            # Менеджер видит всех
+            self.fields['recipients'].queryset = Client.objects.all()
+            self.fields['message'].queryset = Message.objects.all()
+
     def clean_start_time(self):
         start = self.cleaned_data['start_time']
         if start < timezone.now():

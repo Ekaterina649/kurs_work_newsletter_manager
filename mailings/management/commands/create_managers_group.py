@@ -11,20 +11,20 @@ class Command(BaseCommand):
 
         required_permissions = [
             # Права на просмотр и управление клиентами
-            'mailings.can_view_any_clients',
-            'mailings.can_edit_any_clients',
+            'can_view_any_clients',
+            'can_edit_any_clients',
 
             # Права на просмотр и управление сообщениями
-            'mailings.can_view_any_messages',
-            'mailings.can_edit_any_messages',
+            'can_view_any_messages',
+            'can_edit_any_messages',
 
             # Права на просмотр, редактирование и удаление рассылок
-            'mailings.can_view_any_mailings',
-            'mailings.can_edit_any_mailings',
-            'mailings.can_delete_any_mailings',
+            'can_view_any_mailings',
+            'can_edit_any_mailings',
+            'can_delete_any_mailings',
 
             # Право на блокировку пользователей (из модели auth.User)
-            'auth.change_user',
+            'change_user',
 
         ]
 
