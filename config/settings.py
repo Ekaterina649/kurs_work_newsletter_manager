@@ -18,11 +18,14 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") == 'True' else False
 
-
+LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 
 ALLOWED_HOSTS = ['*']
+
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
 
 CACHES = {
     'default': {
