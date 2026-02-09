@@ -1,8 +1,8 @@
 from django.contrib.auth import login
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView, ListView
 
 from config import settings
 from .forms import UserRegistrationForm, UserProfileForm
@@ -12,7 +12,7 @@ from .models import User
 class RegisterView(CreateView):
     template_name = 'users/register.html'
     form_class = UserRegistrationForm
-    success_url = reverse_lazy('')
+    success_url = reverse_lazy('home')
 
     def form_valid(self, form):
         user = form.save()
@@ -44,3 +44,11 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user
+
+class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = User
+    template_name = 'users/user_list.html'
+    context_object_name = 'users'
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Менеджеры').exists()
