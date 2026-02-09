@@ -1,7 +1,10 @@
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView, ListView
 
 from config import settings
@@ -52,3 +55,17 @@ class UserListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
 
     def test_func(self):
         return self.request.user.groups.filter(name='Менеджеры').exists()
+
+class ToggleUserActiveView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        if not request.user.groups.filter(name='Менеджеры').exists():
+            raise PermissionDenied("У вас нет доступа")
+
+        user = get_object_or_404(User, pk=pk)
+        # Не блокируем себя
+        if user == request.user:
+            raise PermissionDenied("Нельзя заблокировать себя")
+
+        user.is_active = not user.is_active
+        user.save()
+        return redirect('users:user_list')
