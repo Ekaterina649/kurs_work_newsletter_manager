@@ -1,4 +1,7 @@
+
 from django.urls import path
+
+from . import views
 from .views import (
     MessageListView, MessageCreateView, MessageUpdateView, MessageDeleteView,
     ClientListView, ClientCreateView, ClientUpdateView, ClientDeleteView,
@@ -28,4 +31,5 @@ urlpatterns = [
     path("<int:pk>/send/", MailingSendView.as_view(), name="mailing_send"),
 
     path('attempts/', AttemptListView.as_view(), name='attempt_list'),
+    path('mailings/<int:pk>/toggle/', views.ToggleMailingActiveView.as_view(), name='mailings_toggle'),
 ]

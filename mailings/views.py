@@ -1,9 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views import View
 from django.views.decorators.cache import cache_page
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 
@@ -218,3 +220,16 @@ class MailingSendView(LoginRequiredMixin, DetailView):
         send_mailing(mailing)
         return redirect("mailings:mailing_list")
 
+
+class ToggleMailingActiveView(LoginRequiredMixin, View):
+    """
+    Менеджер может включать/отключать рассылку.
+    """
+    def post(self, request, pk, *args, **kwargs):
+        if not request.user.groups.filter(name='Менеджеры').exists():
+            raise PermissionDenied("У вас нет прав для изменения рассылки")
+
+        mailing = get_object_or_404(Mailing, pk=pk)
+        mailing.is_active = not mailing.is_active  # переключаем активность
+        mailing.save()
+        return HttpResponseRedirect(reverse_lazy('mailings:mailing_list'))
