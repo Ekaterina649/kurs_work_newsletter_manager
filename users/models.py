@@ -9,6 +9,7 @@ class CustomUserManager(BaseUserManager):
         if not email:
             raise ValueError('Email обязателен')
         email = self.normalize_email(email)
+        extra_fields.setdefault('is_active', False)  # новые пользователи неактивны
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
