@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from django.utils.encoding import force_str, force_bytes
+from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views import View
 from django.views.generic import CreateView, DetailView, UpdateView, ListView
@@ -35,7 +35,6 @@ class RegisterView(CreateView):
         from django.template.loader import render_to_string
 
         current_site = get_current_site(self.request)
-        # Лучше определять протокол динамически
         protocol = 'https' if self.request.is_secure() else 'http'
 
         subject = 'Подтвердите ваш email'
@@ -52,7 +51,7 @@ class RegisterView(CreateView):
             message,
             settings.EMAIL_HOST_USER,
             [user.email],
-            fail_silently=False,  # для разработки лучше False — чтобы видеть ошибки
+            fail_silently=False,
         )
 
 
@@ -75,9 +74,9 @@ class ConfirmEmailView(View):
             user.save(update_fields=['is_active'])
             print(f"После сохранения is_active: {user.is_active}")
 
-            login(request, user)  # сразу логиним (опционально)
+            login(request, user)
             messages.success(request, "Email подтверждён! Добро пожаловать!")
-            return redirect('users:profile')  # или 'home', 'users:login' — как хочешь
+            return redirect('users:profile')
         else:
             print("Токен НЕ валидный")
             messages.error(request, "Ссылка недействительна или устарела. Попробуйте зарегистрироваться заново.")
