@@ -1,12 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.decorators.cache import cache_page
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView
 
 from mailings.forms import MailingForm, ClientForm, MessageForm
@@ -207,18 +204,24 @@ class HomeView(ManagerContextMixin,LoginRequiredMixin, TemplateView):
 
 class MailingSendView(LoginRequiredMixin, DetailView):
     model = Mailing
-    template_name = "mailings/mailing_send.html"
+    template_name = "mailings/mailing_send_confirm.html"  # новый шаблон
 
     def dispatch(self, request, *args, **kwargs):
         mailing = self.get_object()
+        # Проверка прав: только владелец может запускать
         if mailing.owner != request.user:
             raise PermissionDenied("Только владелец может отправлять рассылку")
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         mailing = self.get_object()
-        send_mailing(mailing)
-        return redirect("mailings:mailing_list")
+        # Отправляем рассылку
+        result = send_mailing(mailing)
+        # Показываем страницу подтверждения с информацией
+        return render(request, self.template_name, {
+            'mailing': mailing,
+            'result': result
+        })
 
 
 class DisableMailingView(LoginRequiredMixin, View):

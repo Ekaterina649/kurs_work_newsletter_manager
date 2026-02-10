@@ -1,0 +1,12 @@
+{% extends "mailings/base.html" %}
+
+{% block title %}Рассылка запущена{% endblock %}
+
+{% block content %}
+<div class="alert alert-success text-center">
+    <h3>Рассылка "{{ mailing.message.subject }}" успешно запущена!</h3>
+    <p>Статус: {{ mailing.status }}</p>
+    <p>{{ result }}</p>
+    <a href="{% url 'mailings:mailing_list' %}" class="btn btn-primary mt-3">Вернуться к списку рассылок</a>
+</div>
+{% endblock %}

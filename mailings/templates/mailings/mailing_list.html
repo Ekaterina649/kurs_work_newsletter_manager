@@ -42,9 +42,20 @@
             </td>
             <td class="text-end">
                 {% if mailing.owner == user %}
+                    <!-- Владельцы могут редактировать и удалить -->
                     <a href="{% url 'mailings:mailing_update' mailing.pk %}" class="btn btn-sm btn-outline-secondary">✏️</a>
                     <a href="{% url 'mailings:mailing_delete' mailing.pk %}" class="btn btn-sm btn-outline-danger">🗑</a>
+
+                    <!-- Владельцы могут запускать только созданные и активные рассылки -->
+                    {% if mailing.status == 'Создана' and not mailing.is_disabled %}
+                        <form method="post" action="{% url 'mailings:mailing_send' mailing.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                            <button class="btn btn-sm btn-success">Запустить</button>
+                        </form>
+                    {% endif %}
+
                 {% elif is_manager and not mailing.is_disabled and mailing.status != 'Завершена' %}
+                    <!-- Менеджеры могут отключать активные, незавершённые рассылки -->
                     <form method="post" action="{% url 'mailings:mailing_disable' mailing.pk %}" style="display:inline;">
                         {% csrf_token %}
                         <button class="btn btn-sm btn-danger">Отключить</button>
