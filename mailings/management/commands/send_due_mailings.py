@@ -6,8 +6,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class Command(BaseCommand):
-    help = 'Отправляет все активные рассылки, у которых пришло время'
+    help = "Отправляет все активные рассылки, у которых пришло время"
 
     def handle(self, *args, **options):
         now = timezone.now()

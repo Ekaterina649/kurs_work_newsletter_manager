@@ -2,32 +2,71 @@
 
 from django.db import migrations
 
-def add_permissions(apps, schema_editor):
-    Permission = apps.get_model('auth', 'Permission')
-    ContentType = apps.get_model('contenttypes', 'ContentType')
 
-    client_ct = ContentType.objects.get(app_label='mailings', model='client')
-    message_ct = ContentType.objects.get(app_label='mailings', model='message')
-    mailing_ct = ContentType.objects.get(app_label='mailings', model='mailing')
+def add_permissions(apps, schema_editor):
+    Permission = apps.get_model("auth", "Permission")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+
+    client_ct = ContentType.objects.get(app_label="mailings", model="client")
+    message_ct = ContentType.objects.get(app_label="mailings", model="message")
+    mailing_ct = ContentType.objects.get(app_label="mailings", model="mailing")
 
     # Client
-    Permission.objects.bulk_create([
-        Permission(codename='can_view_any_clients', name='Может просматривать любых клиентов', content_type=client_ct),
-        Permission(codename='can_edit_any_clients', name='Может редактировать любых клиентов', content_type=client_ct),
-    ], ignore_conflicts=True)
+    Permission.objects.bulk_create(
+        [
+            Permission(
+                codename="can_view_any_clients",
+                name="Может просматривать любых клиентов",
+                content_type=client_ct,
+            ),
+            Permission(
+                codename="can_edit_any_clients",
+                name="Может редактировать любых клиентов",
+                content_type=client_ct,
+            ),
+        ],
+        ignore_conflicts=True,
+    )
 
     # Message
-    Permission.objects.bulk_create([
-        Permission(codename='can_view_any_messages', name='Может просматривать любые сообщения', content_type=message_ct),
-        Permission(codename='can_edit_any_messages', name='Может редактировать любые сообщения', content_type=message_ct),
-    ], ignore_conflicts=True)
+    Permission.objects.bulk_create(
+        [
+            Permission(
+                codename="can_view_any_messages",
+                name="Может просматривать любые сообщения",
+                content_type=message_ct,
+            ),
+            Permission(
+                codename="can_edit_any_messages",
+                name="Может редактировать любые сообщения",
+                content_type=message_ct,
+            ),
+        ],
+        ignore_conflicts=True,
+    )
 
     # Mailing
-    Permission.objects.bulk_create([
-        Permission(codename='can_view_any_mailings', name='Может просматривать любые рассылки', content_type=mailing_ct),
-        Permission(codename='can_edit_any_mailings', name='Может редактировать любые рассылки', content_type=mailing_ct),
-        Permission(codename='can_delete_any_mailings', name='Может удалять любые рассылки', content_type=mailing_ct),
-    ], ignore_conflicts=True)
+    Permission.objects.bulk_create(
+        [
+            Permission(
+                codename="can_view_any_mailings",
+                name="Может просматривать любые рассылки",
+                content_type=mailing_ct,
+            ),
+            Permission(
+                codename="can_edit_any_mailings",
+                name="Может редактировать любые рассылки",
+                content_type=mailing_ct,
+            ),
+            Permission(
+                codename="can_delete_any_mailings",
+                name="Может удалять любые рассылки",
+                content_type=mailing_ct,
+            ),
+        ],
+        ignore_conflicts=True,
+    )
+
 
 class Migration(migrations.Migration):
 
@@ -35,4 +74,6 @@ class Migration(migrations.Migration):
         ("mailings", "0003_alter_client_options_alter_mailing_options_and_more"),
     ]
 
-    operations = [ migrations.RunPython(add_permissions),]
+    operations = [
+        migrations.RunPython(add_permissions),
+    ]

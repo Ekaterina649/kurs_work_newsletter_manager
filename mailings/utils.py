@@ -3,6 +3,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from .models import Mailing, Attempt
 
+
 def send_mailing(mailing: Mailing):
     """
     Отправка рассылки и создание Attempt для каждого получателя.
@@ -29,14 +30,12 @@ def send_mailing(mailing: Mailing):
             # создаём попытку со статусом 'Успешно'
             Attempt.objects.create(
                 mailing=mailing,
-                status='Успешно',
-                server_response=f"Письмо отправлено: {recipient.email}"
+                status="Успешно",
+                server_response=f"Письмо отправлено: {recipient.email}",
             )
         except Exception as e:
             # создаём попытку со статусом 'Не успешно'
             Attempt.objects.create(
-                mailing=mailing,
-                status='Не успешно',
-                server_response=str(e)
+                mailing=mailing, status="Не успешно", server_response=str(e)
             )
     return f"Рассылка {mailing.id} завершена."
