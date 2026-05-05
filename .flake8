@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 119
+exclude =
+    .venv,
+    venv,
+    .git,
+    __pycache__,
+    migrations,
+    *.egg-info,
+    .pytest_cache,
+    node_modules
+
+ignore = E501,W503,E203
+

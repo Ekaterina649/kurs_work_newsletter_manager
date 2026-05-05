@@ -1,0 +1,4 @@
+Здравствуйте, {{ user.email }}!
+Пожалуйста, подтвердите ваш email, перейдя по ссылке:
+<a href="http://{{ domain }}{% url 'users:confirm_email' uidb64=uidb64 token=token %}">Подтвердить Email</a>
+

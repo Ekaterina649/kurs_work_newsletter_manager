@@ -1,0 +1,44 @@
+{% extends "mailings/base.html" %}
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+<h2>Список пользователей</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Имя</th>
+            <th>Активен</th>
+            {% if user.groups.first.name == "Менеджеры" %}
+                <th>Действие</th>
+            {% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+        <tr>
+            <td>{{ u.email }}</td>
+            <td>{{ u.get_full_name|default:"-" }}</td>
+            <td>{{ u.is_active|yesno:"Да,Нет" }}</td>
+            {% if user.groups.first.name == "Менеджеры" %}
+                <td>
+                    {% if u != user %}
+                       <form method="post" action="{% url 'users:toggle_user_active' u.pk %}">
+                            {% csrf_token %}
+                           <button class="btn btn-sm {% if u.is_active %}btn-danger{% else %}btn-success{% endif %}">
+                                {% if u.is_active %}Заблокировать{% else %}Разблокировать{% endif %}
+                           </button>
+                        </form>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            {% endif %}
+        </tr>
+        {% empty %}
+        <tr><td colspan="4">Пользователей нет</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

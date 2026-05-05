@@ -1,0 +1,25 @@
+{% extends "mailings/base.html" %}
+
+{% block title %}Отправка рассылки{% endblock %}
+
+{% block content %}
+<h2>Рассылка: {{ object.message.subject }}</h2>
+<p>Сообщение: {{ object.message.body }}</p>
+<p>Получатели:</p>
+<ul>
+    {% for client in object.recipients.all %}
+        <li>{{ client.full_name }} — {{ client.email }}</li>
+    {% endfor %}
+</ul>
+
+{% if object.owner == user or user.groups.all.0.name == "Менеджеры" %}
+    <form method="post" action="{% url 'mailings:mailing_send' object.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary mt-3">
+            Отправить рассылку сейчас
+        </button>
+    </form>
+{% else %}
+    <p class="text-muted">Отправка доступна только владельцу или менеджеру</p>
+{% endif %}
+{% endblock %}
